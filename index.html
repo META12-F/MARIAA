@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Laritza</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        h1, h2, .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+
+        .fade-in {
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .fade-out {
+            animation: fadeOut 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .heart {
+            color: #fb7185;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(251, 113, 133, 0.4);
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center">
+
+    <!-- Fondo animado de partículas -->
+    <canvas id="canvas-container"></canvas>
+
+    <!-- Contenedor principal de texto -->
+    <div class="content-layer w-full max-w-3xl px-6 md:px-12 text-center">
+        
+        <div id="message-container" class="min-h-[250px] flex flex-col items-center justify-center opacity-0">
+            <h2 id="main-text" class="text-2xl md:text-4xl lg:text-5xl font-light leading-relaxed serif-font mb-8 text-gray-100 tracking-wide drop-shadow-lg">
+                <!-- El texto se inyecta con JS -->
+            </h2>
+            <p id="sub-text" class="text-base md:text-lg text-gray-300 font-light hidden mb-8">
+                <!-- Texto secundario si aplica -->
+            </p>
+        </div>
+
+        <button id="next-btn" class="mt-8 px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full backdrop-blur-sm text-sm tracking-widest uppercase transition-all duration-300 opacity-0 btn-hover" onclick="nextSlide()">
+            Siguiente
+        </button>
+
+        <div id="final-heart" class="hidden mt-6 text-4xl heart">
+            ❤
+        </div>
+    </div>
+
+    <script>
+        // --- TEXTOS PARA LARITZA ---
+        const slides = [
+            {
+                main: "Hola, Laritza...",
+                sub: ""
+            },
+            {
+                main: "Sé que últimamente las cosas no han sido fáciles.",
+                sub: "Y sé que vienes de una tormenta que te dejó heridas profundas."
+            },
+            {
+                main: "Entiendo perfecto lo que se siente.",
+                sub: "Sé lo que es que te rompan el corazón, que te decepcionen y sentir que es imposible volver a confiar."
+            },
+            {
+                main: "Es normal que el miedo hable y te diga que 'todos somos iguales'...",
+                sub: "Pero hoy quiero pedirte algo."
+            },
+            {
+                main: "No te pido que confíes en mí de golpe, solo quiero que me permitas demostrarte que no soy como los demás.",
+                sub: ""
+            },
+            {
+                main: "Quiero conocerte de verdad.",
+                sub: "A la mujer fuerte, a la niña soñadora, a la amiga incondicional, a la amante, a tu todo..."
+            },
+            {
+                main: "Jamás te haría daño.",
+                sub: "Porque sé lo mucho que cuesta reparar un corazón, y mi única intención es cuidar el tuyo y hacerte sonreír."
+            },
+            {
+                main: "Solo quiero caminar a tu lado...",
+                sub: "¿Me dejas intentarlo?"
+            }
+        ];
+
+        let currentIndex = 0;
+        const msgContainer = document.getElementById('message-container');
+        const mainText = document.getElementById('main-text');
+        const subText = document.getElementById('sub-text');
+        const nextBtn = document.getElementById('next-btn');
+        const finalHeart = document.getElementById('final-heart');
+
+        // Función para mostrar el slide actual
+        function showSlide(index) {
+            const slide = slides[index];
+            
+            // Quitar clases previas
+            msgContainer.classList.remove('fade-out');
+            msgContainer.classList.add('fade-in');
+            
+            // Actualizar textos
+            mainText.innerHTML = slide.main;
+            
+            if (slide.sub) {
+                subText.innerHTML = slide.sub;
+                subText.classList.remove('hidden');
+            } else {
+                subText.classList.add('hidden');
+            }
+
+            // Mostrar el botón con retraso para que ella lea primero
+            nextBtn.classList.remove('fade-in', 'fade-out');
+            nextBtn.style.opacity = '0';
+            nextBtn.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                if (index < slides.length - 1) {
+                    nextBtn.innerText = "Siguiente";
+                } else {
+                    nextBtn.innerText = "Para ti";
+                }
+                nextBtn.classList.add('fade-in');
+                nextBtn.style.pointerEvents = 'auto';
+            }, 2000); // 2 segundos antes de mostrar el botón
+        }
+
+        // Función para avanzar
+        function nextSlide() {
+            // Desvanecer actual
+            msgContainer.classList.remove('fade-in');
+            msgContainer.classList.add('fade-out');
+            
+            nextBtn.classList.remove('fade-in');
+            nextBtn.classList.add('fade-out');
+            nextBtn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                currentIndex++;
+                if (currentIndex < slides.length) {
+                    showSlide(currentIndex);
+                } else {
+                    // Final especial
+                    msgContainer.classList.remove('fade-out');
+                    mainText.innerHTML = "Gracias por dejarme entrar un poquito en tu mundo.";
+                    subText.innerHTML = "Estoy aquí para ti. Siempre.";
+                    subText.classList.remove('hidden');
+                    msgContainer.classList.add('fade-in');
+                    
+                    finalHeart.classList.remove('hidden');
+                    finalHeart.classList.add('fade-in');
+                    nextBtn.style.display = 'none';
+                }
+            }, 1000); // Esperar a que termine la animación de fade-out
+        }
+
+        // Iniciar la secuencia al cargar la página
+        window.onload = () => {
+            initParticles();
+            setTimeout(() => {
+                showSlide(0);
+            }, 500);
+        };
+
+
+        // --- ANIMACIÓN DEL FONDO (Luciérnagas / Estrellas) ---
+        const canvas = document.getElementById('canvas-container');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 70;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * canvas.height; // Inicializar en posiciones aleatorias
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 2 + 0.5;
+                this.speed = Math.random() * 0.5 + 0.1;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.fadeSpeed = Math.random() * 0.01 + 0.005;
+                this.fadeDirection = Math.random() > 0.5 ? 1 : -1;
+                this.color = `rgba(251, 113, 133, `; // Color rosa suave
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.x += Math.sin(this.y * 0.01) * 0.5; // Movimiento ondulante sutil
+
+                // Parpadeo
+                this.opacity += this.fadeSpeed * this.fadeDirection;
+                if (this.opacity >= 0.8) this.fadeDirection = -1;
+                if (this.opacity <= 0.1) this.fadeDirection = 1;
+
+                if (this.y < -10) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color + this.opacity + `)`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = "rgba(251, 113, 133, 0.8)";
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            animateParticles();
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+    </script>
+</body>
+</html>
